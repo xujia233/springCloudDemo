@@ -1,0 +1,31 @@
+server:
+  port: 8089
+
+spring:
+  application:
+    name: client-feign
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8076/eureka/
+
+# 由于feign默认带了断路器功能，这里需手动开启
+feign:
+  hystrix:
+    enabled: true
+
+# 断路器默认超时时间为1s，如果单设置该参数是不会生效的，因为feign也是使用ribbon
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+
+ribbon:   # 设置ribbon的超时时间，ribbon的超时时间默认也为1s，这里使用Feign会和Hystrix的超时间相互干扰
+  ReadTimeout: 10000
+  ConnectTimeout: 3000
+  OkToRetryOnAllOperations: true  #对所有操作都进行重试。
+  MaxAutoRetriesNextServer: 2     # 切换实例的重试次数。
+  MaxAutoRetries: 1               # 对当前实例的重试次数。

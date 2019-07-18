@@ -1,0 +1,13 @@
+server:
+  port: 8076
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    # 通过下面两个配置来指明当前是个eureka-server，因为默认情况下eureka-server也是一个eureka-client，必须要指定
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      # 如果不加defaultZone启动会出现无法绑定的错误，但配置自动补充时其实并没有补充该参数，需手动加上
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

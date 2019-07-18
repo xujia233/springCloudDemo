@@ -1,0 +1,45 @@
+package springcloud.eurekaribbon.impl;
+
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+/**
+ * Created by xujia on 2019/7/17
+ */
+@Service
+public class HelloServiceImpl {
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @HystrixCommand(fallbackMethod = "sayHelloFallback",
+            // 接下来均为Hystrix性能配置，更多配置参考官方文档
+            commandProperties = {
+            // 执行超时时间|default:1000
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000"),
+            // 触发断路最低请求数|default:20
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "50") },
+            threadPoolProperties = {
+            // 线程池核心数|default:10
+            @HystrixProperty(name = "coreSize", value = "10"),
+            // 队列长度|default:-1(SynchronousQueue)
+            @HystrixProperty(name = "maxQueueSize", value = "20"),
+            // 队满拒绝服务阈值|default:5|此值生效优先于队满
+            @HystrixProperty(name = "queueSizeRejectionThreshold", value = "15"),
+            // 窗口拆分数|默认10
+            @HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "12"),
+            // 窗口维持时间|默认10000
+            @HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "1440") })
+    public String sayHello() {
+        // 使用restTemplate基于http的restful方式在服务之间通信
+        // 方法前缀get即表示get请求，第一个参数即为url，这里直接使用对应服务名替代，返回的Object类型会根据第二个参数进行自动转换
+        return restTemplate.getForObject("http://SERVICE-HELLO/hello", String.class);
+    }
+
+    public String sayHelloFallback() {
+        return "hi，菜虚坤，sorry，服务不可用";
+    }
+}

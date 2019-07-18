@@ -1,0 +1,14 @@
+server:
+  # 占用8077和8078端口，模拟小集群
+  port: 8077
+
+eureka:
+  client:
+    # 标明服务注册中心地址
+    service-url:
+      defaultZone: http://localhost:8076/eureka/
+
+spring:
+  application:
+    # 指明当前服务名称，用于调用过程中的指示
+    name: service-hello
