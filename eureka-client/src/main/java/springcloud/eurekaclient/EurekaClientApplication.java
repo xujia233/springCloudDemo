@@ -24,7 +24,7 @@ public class EurekaClientApplication {
     @RequestMapping(value = "hello", method = RequestMethod.GET)
     public String hello() {
 //        try {
-//            Thread.sleep(2000);
+//            Thread.sleep(1000);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
